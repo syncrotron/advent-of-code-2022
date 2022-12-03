@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Samuel Horovatin, December 2022
 
 # Part 1
 max_calories = 0
