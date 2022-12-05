@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# Samuel Horovatin, December 2022
 from itertools import islice
 
 # Ascii for lower case is 97-123, upper case is 65-91

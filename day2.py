@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Samuel Horovatin, December 2022
 
 MatchScoreInitial = {
