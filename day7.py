@@ -25,13 +25,16 @@ def cd(cd_dir: str, curr_node: Node, root_node: Node):
         next_node = find_child(cd_dir, curr_node)
     return next_node
 
-def update_parents_size(curr_node: Node, old_size: int, new_size: int):
-    if not curr_node.parent == None:
-        next_old_size = curr_node.size
-        curr_node.size = curr_node.size - old_size + new_size
-        update_parents_size(curr_node.parent, next_old_size, curr_node.size)
+def depthfirst(curr_node: Node, size_dict: dict()):
+    
+    if curr_node.children == None:
+        return size_dict, curr_node.size
     else:
-        return curr_node
+        for child in curr_node.children:
+           size_dict, children_size = depthfirst(child, size_dict)
+           curr_node.size = curr_node.size + children_size
+        size_dict[curr_node.name] = curr_node.size
+        return size_dict, curr_node.size
 
 MAX_DIR_SIZE = 100000
 CD_CMD_LEN = len('$ cd ')
@@ -40,7 +43,6 @@ curr_node = root_node
 file_nodes, dir_nodes = [], []
 for line in open("./input/day7.txt", 'r'):
     line = line.rstrip('\n') # Removes pesky newline
-    print(line)
     if '$ cd ' in line:
         cd_dir = line[CD_CMD_LEN:]
         curr_node = cd(cd_dir, curr_node, root_node) 
@@ -51,8 +53,17 @@ for line in open("./input/day7.txt", 'r'):
             
             if cmd_parts[0] == 'dir': 
                 curr_node.children.append(Node(cmd_parts[1], 0, curr_node))
-                dir_nodes.add((cmd_parts[1], 0))
+                dir_nodes.append((cmd_parts[1], 0))
             else:
                 new_file_node = Node(cmd_parts[1], int(cmd_parts[0]), curr_node, None)
                 curr_node.children.append(new_file_node)
                 file_nodes.append(new_file_node)
+
+root_node = curr_node
+folder_size_dict = dict()
+size_dict, root_size = depthfirst(root_node, folder_size_dict)
+
+dir_sum = 0
+for dir in folder_size_dict:
+    if folder_size_dict[dir] <= MAX_DIR_SIZE:
+        dir_sum = dir_sum + folder_size_dict[dir]
