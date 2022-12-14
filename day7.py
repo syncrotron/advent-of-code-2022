@@ -43,13 +43,13 @@ def update_all_sizes(curr_node: Node):
             curr_node.size = curr_node.size + children_size
         return curr_node, curr_node.size
 
-def find_size_total_below_thresh(curr_node: Node, total: int, max_size: int):
+def find_size_total_below_thresh(curr_node: Node, total: int, thresh: int):
     if curr_node.children is None:
         return total
     else:
-        total = total + (curr_node.size if curr_node.size <= max_size else 0)
+        total = total + (curr_node.size if curr_node.size <= thresh else 0)
         for child in curr_node.children:
-            total = find_size_total_below_thresh(child, total, max_size)
+            total = find_size_total_below_thresh(child, total, thresh)
         return total
 
 MAX_DIR_SIZE = 100000
@@ -73,7 +73,25 @@ for line in open("./input/day7.txt", 'r'):
                 curr_node.children.append(new_file_node)
                 file_nodes.append(new_file_node)
 
+
 root_node, root_size = update_all_sizes(find_root(curr_node))
 
+print(f"Sum of dirs smaller than {MAX_DIR_SIZE}: {find_size_total_below_thresh(root_node, 0, MAX_DIR_SIZE)}")
+input("Press Enter to continue...") 
 
-print(find_size_total_below_thresh(root_node, 0, MAX_DIR_SIZE))
+def find_sizes_above_thresh(curr_node: Node, dir_size_list: List[int], thresh: int):
+    if curr_node.children is None:
+        return dir_size_list
+    else:
+        if curr_node.size >= thresh:
+            dir_size_list.append(curr_node.size)
+        for child in curr_node.children:
+            dir_size_list = find_sizes_above_thresh(child, dir_size_list, thresh)
+        return dir_size_list
+
+SYS_SIZE = 70000000
+SIZE_REQUIRED = 30000000
+min_size = min(find_sizes_above_thresh(root_node, [], SIZE_REQUIRED - (SYS_SIZE - root_node.size)))
+print(f"Smallest folder size to be deleted: {min_size}")
+input("Press Enter to continue...") 
+
